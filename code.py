@@ -140,12 +140,12 @@ while True:
         board.DISPLAY.brightness = 1
       
     batt_counter = batt_counter + 1
-    if batt_counter > 9:            # update battery voltage once per second for testing...
-    # if batt_counter > 3000:         # update battery voltage every 5 minutes for real
+    # if batt_counter > 9:            # update battery voltage once per second for testing...
+    if batt_counter > 3000:         # update battery voltage every 5 minutes for real
         batt_counter = 0
         raw_volts = battery_checker.get_voltage()
         batt_percent = battery_checker.get_battery_pct()
-        display_main.set_text_wnb3("Vbat:"+str(raw_volts)+" PCT:"+str(batt_percent))
+        # display_main.set_text_wnb3("Vbat:"+str(raw_volts)+" PCT:"+str(batt_percent))
         display_main.show_battery_status(batt_percent) 
 
     beep_manager.process_beep()

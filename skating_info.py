@@ -222,8 +222,6 @@ class Skating_Info:
 
             if self._current_main_num_of_seconds > (self._programduration_sec / 2):
                 self._display_main._set_half2_textbox("2nd Half")
-            # else:
-            #     self._display_main._set_half2_textbox("")
 
         if self._mode == "warmup" and self._main_timer_running == "yes":
             # for warmups - initially green; yellow at 60s, orange at 5, red at 0 and below
@@ -275,12 +273,12 @@ class Skating_Info:
                 self._beep_manager.set_beep_counter(2)
 
             if self.get_number_of_interruptions() == 0:
-            #     self._display_main.set_text_wnb3("No Interruptions")
+                self._display_main.set_text_wnb3("No Interruptions")
                 pass
             else:
                 message = "Interrupt @ " + self._format_timestring(self._interrupt_started_at_seconds)
                 message = message + "   Dur: " + str(self._seconds_since_interrupt_started) + "s"
-            #     self._display_main.set_text_wnb3(message)
+                self._display_main.set_text_wnb3(message)
 
                 if self._seconds_since_interrupt_started > 40:
                     self._display_main._watch_notes3_box.color = myconstants.RED
