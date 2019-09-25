@@ -21,7 +21,6 @@ from adafruit_display_shapes.rect import Rect
 from adafruit_button import Button
 import adafruit_touchscreen
 from analogio import AnalogIn
-# from adafruit_pyportal import PyPortal
 
 from display_main import Display_Main
 from display_todset import Display_Todset
@@ -30,34 +29,9 @@ from controller import Controller
 from beeper import Beep_Manager
 from real_time_clock import RealTimeClock
 import myconstants
+import battery_checker
 
-# junk = DigitalInOut(board.D3)
-# junk.direction = Direction.OUTPUT
-# while True:
-#     junk.value = True
-#     time.sleep(2)
-#     junk.value = False
-#     time.sleep(2)
-
-
-# 20190912 modifid to use A3 (on connector D4) instead of A1 (on conn D3) 
-# because the power pin on connector D3 is compromised on 1st prototype unit
-# TRULY, you need to use board.D4 for the analog signal on the D4 connector.  it says there is no A3
-analog_in_pin = AnalogIn(board.D4)
-
-def get_voltage():
-    avg = 0
-    num_readings = 5
-    for _ in range(num_readings):
-        avg += analog_in_pin.value        
-    avg /= num_readings
-    # scaled_analog_volts = (avg * 2) * (3.3 / 65536)       # because resistively divided by 2 in hardware
-    # analog_volts = avg * (analog_in_pin.reference_voltage / 65536)   
-    analog_volts = avg * (5 / 65536)       
-    # analog_volts = analog_in_pin.reference_voltage  
-    return analog_volts
-
-# initial splash screen just so it doesn't look empty for so long while it loads fonts 
+# initial splash screen just so it doesn't look dead for so long while it loads fonts 
 # cwd = ("/"+__file__).rsplit('/', 1)[0]      # the current working directory (where this file is)
 # startup_background = cwd+"/pyportal_splash.bmp"
 splash = displayio.Group()
@@ -67,7 +41,6 @@ background = displayio.OnDiskBitmap(f)
 face = displayio.TileGrid(background, pixel_shader=displayio.ColorConverter(), x=0, y=0)
 splash.append(face)
 board.DISPLAY.wait_for_frame()
-
 
 Coords = namedtuple("Point", "x y")
 
@@ -84,7 +57,6 @@ fontBig = bitmap_font.load_font("/fonts/Roboto-Bold-75.bdf")
 glyphs = b'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-,.: '
 font.load_glyphs(glyphs)
 fontBig.load_glyphs(glyphs)
-
 
 # ======================== Make the main display context (watch) ========================
 # Make a background color fill
@@ -167,30 +139,14 @@ while True:
     else:
         board.DISPLAY.brightness = 1
       
-    # batt_counter = batt_counter + 1
-    # if batt_counter > 9:            # update battery voltage once per second for testing...
-    # if batt_counter > 3000:         # update battery voltage every 5 minutes for real
-    #     batt_counter = 0
-    #     scaled_volts = get_scaled_voltage()
-        # we want 4.1v battery to indicate 100 %
-        # and we want 3.2v battery to indicate 0 %
-    #    batt_percent = 100 * (scaled_volts - 3.0) / (4.1 - 3.2)
-    #     display_main.set_text_wnb3("Vbat:"+str(scaled_volts)+" PCT:"+str(batt_percent))
-    #    display_main.show_battery_status(batt_percent) 
-
-      
     batt_counter = batt_counter + 1
     if batt_counter > 9:            # update battery voltage once per second for testing...
     # if batt_counter > 3000:         # update battery voltage every 5 minutes for real
         batt_counter = 0
-        raw_volts = get_voltage()
-        # we want 4.1v battery to indicate 100 % --> this yields 1.45 raw_volts read
-        # and we want 3.2v battery to indicate 0 % --> this yielsds 1.00 raw_volts read
-        batt_percent = 100 * (raw_volts - 1.00) / (1.45 - 1.00)
-        # display_main.set_text_wnb3("Vbat:"+str(raw_volts)+" Vref="+str(analog_in_pin.reference_voltage))
+        raw_volts = battery_checker.get_voltage()
+        batt_percent = battery_checker.get_battery_pct()
         display_main.set_text_wnb3("Vbat:"+str(raw_volts)+" PCT:"+str(batt_percent))
         display_main.show_battery_status(batt_percent) 
-        # print("battery="+str(raw_volts))
 
     beep_manager.process_beep()
     time.sleep(0.1)
