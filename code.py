@@ -141,7 +141,7 @@ while True:
       
     batt_counter = batt_counter + 1
     # if batt_counter > 9:            # update battery voltage once per second for testing...
-    if batt_counter > 3000:         # update battery voltage every 5 minutes for real
+    if batt_counter > 600:            # update battery voltage every 1 minute for real
         batt_counter = 0
         raw_volts = battery_checker.get_voltage()
         batt_percent = battery_checker.get_battery_pct()
