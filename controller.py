@@ -82,7 +82,7 @@ class Controller:
             self._beep_manager.quick_chirp()
 
         elif input_key == "Whistle":
-            self._beep_manager.set_beep_counter(20)
+            self._beep_manager.set_beep_counter(30)
 
         elif input_key == "Warmup":
             self._display_main.set_btnA("Compete")

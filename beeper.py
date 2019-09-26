@@ -51,7 +51,11 @@ class Beep_Manager:
 
     def process_beep(self):
         if self.get_beep_counter() > 0:
-            self._beep_device.value = True
+            # we want a beep, but make it chirpy...
+            if (self.get_beep_counter() % 3) > 0:
+                self._beep_device.value = True
+            else:
+                self._beep_device.value = False
             self.decrement_beep_counter()
         else:
             self._beep_device.value = False
